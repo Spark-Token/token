@@ -22,6 +22,12 @@ Spark tokens are relatively competatively fair with a very low difficulty floor 
 function mint(uint256 nonce) public returns (bool success) {
     // prevent gas racing by setting the maximum gas price to 5 gwei
     require(tx.gasprice < 5 * 1000000000);
+    
+    // Calculate time since last reward was given
+    uint timeSinceLastProof = (now - timeOfLastProof);
+    // Rewards cannot be given too quickly
+    require(timeSinceLastProof >  5 seconds);
+    timeOfLastProof = now;
         
     // derive solution hash n
     uint256 n = uint256(
