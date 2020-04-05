@@ -41,6 +41,9 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
 
     // ERC918 mint function
     function mint(uint256 nonce) public returns (bool success) {
+        // prevent gas racing by setting the maximum gas price to 5 gwei
+        require(tx.gasprice < 5 * 1000000000);
+
         // derive solution hash n
         uint256 n = uint256(
             keccak256(abi.encodePacked(currentChallenge, msg.sender, nonce))
