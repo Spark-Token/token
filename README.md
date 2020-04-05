@@ -20,6 +20,9 @@ Spark tokens are relatively competatively fair with a very low difficulty floor 
 ```solidity
 // ERC918 mint function
 function mint(uint256 nonce) public returns (bool success) {
+    // prevent gas racing by setting the maximum gas price to 5 gwei
+    require(tx.gasprice < 5 * 1000000000);
+        
     // derive solution hash n
     uint256 n = uint256(
         keccak256(abi.encodePacked(currentChallenge, msg.sender, nonce))
@@ -89,4 +92,7 @@ https://ropsten.etherscan.io/address/0x1ce8d42bde881b7846bc525e968e3a50a032781d
 
 ## References
 
-Spark Token was inspired by [FuelToken](https://github.com/snissn/FuelToken) designed by [@mikers](https://github.com/snissn)
+Spark Token was inspired by:
+* [FuelToken](https://github.com/snissn/FuelToken) designed by [@mikers](https://github.com/snissn) ( don't forget to [mine](http://mike.rs/) with @mikers )
+* [MinableToken](https://github.com/liberation-online/MineableToken) designed by [@adamjamesmartin](https://github.com/adamjamesmartin) of the [KIWI project](https://kiwi-token.com/)
+* [0xBitcoin](https://etherscan.io/address/0xb6ed7644c69416d67b522e20bc294a9a9b405b31#code) designed by [@Infernal_toast](https://github.com/admazzola) of the [0xBitcoin Project](https://0xbitcoin.org/)
