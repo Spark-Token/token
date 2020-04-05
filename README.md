@@ -17,7 +17,7 @@ Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of
 
 Spark tokens are relatively competatively fair with a very low difficulty floor (1) that miners have to adhere to. This means that if you mine 1,000,000,000 tokens or just 1 you have the same advantage in submitting your solution. This important feature of the token levels the playing field for smaller miners looking to accumulate hashpower independently.
 
-```
+```solidity
 // ERC918 mint function
 function mint(uint256 nonce) public returns (bool success) {
     // derive solution hash n
@@ -55,7 +55,7 @@ For example if I wanted to mine 100 Spark Tokens I would tell my miner to target
 
 Since 0xBitcoin, KIWI and other EIP918 tokens have a deterministic difficulty, a decentralized swap contract could be created to ensure fair trade value per the following pseudocode:
 
-```
+```solidity
 contract Spark0xBitcoinSwapper {
   // 0xBitcoin
   EIP918Interface btc = EIP918Interface(0xb6ed7644c69416d67b522e20bc294a9a9b405b31);
