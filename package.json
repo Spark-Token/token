@@ -1,0 +1,32 @@
+{
+  "name": "sparktoken",
+  "version": "1.0.0",
+  "description": "Spark proof of work token",
+  "main": "truffle-config.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Spark-Token/token.git"
+  },
+  "keywords": [
+    "eip918",
+    "eip20",
+    "proof-of-work",
+    "token"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Spark-Token/token/issues"
+  },
+  "homepage": "https://github.com/Spark-Token/token#readme",
+  "dependencies": {
+    "@openzeppelin/contracts": "^2.5.0",
+    "truffle-flattener": "^1.4.2"
+  }
+}
