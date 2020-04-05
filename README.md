@@ -9,7 +9,43 @@ target_difficulty = 10
 t = target_difficulty / MAX_TARGET
 ```
 
-In the above scenario the mining for target t would provide the miner with at least 10 Spark tokens. Since the mining process itself is random, the resulting solution could also be higher providing a higher payout than with traditional difficulty adjusted tokens. 
+In the above scenario the mining for target would provide the miner with at least 10 Spark tokens. Since the mining process itself is random, the resulting solution could also be higher providing a higher payout than with traditional difficulty adjusted/block reward based tokens.
+
+### Minting Spark Tokens
+
+Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of Work nonce is discovered by mining clients, the solution is hashed with the contract's challenge number and miner address and then checked that it meets required difficulty levels. ( The minimum difficulty of the Spark Token being 1 )
+
+Spark tokens are relatively competatively fair with a very low difficulty floor (1) that miners have to adhere to. This means that if you mine 1,000,000,000 tokens or just 1 you have the same advantage in submitting your solution. This important feature of the token levels the playing field for smaller miners looking to accumulate hashpower independently.
+
+```
+    // ERC918 mint function
+    function mint(uint256 nonce) public returns (bool success) {
+        // derive solution hash n
+        uint256 n = uint256(
+            keccak256(abi.encodePacked(currentChallenge, msg.sender, nonce))
+        );
+        // check that the minimum difficulty is met
+        require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
+
+        // reward the mining difficulty - the number of zeros on the PoW solution
+        uint256 reward = MAXIMUM_TARGET.div(n);
+        // emit Mint Event
+        emit Mint(msg.sender, reward, 0, currentChallenge);
+        // update the challenge to prevent proof resubmission
+        currentChallenge = keccak256(
+            abi.encodePacked(
+                nonce,
+                currentChallenge,
+                now,
+                blockhash(block.number - 1)
+            )
+        );
+
+        // perform the mint operation
+        _mint(msg.sender, reward);
+        return true;
+    }
+```
 
 ### Example Scenario
 
