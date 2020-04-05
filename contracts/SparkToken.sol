@@ -7,6 +7,7 @@ import "./ERC918Interface.sol";
 
 contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
     using SafeMath for uint256;
+    uint public timeOfLastProof;
     bytes32 public currentChallenge;
     uint256 public MINIMUM_TARGET = 2**16;
     uint256 public MAXIMUM_TARGET = 2**234;
@@ -15,6 +16,9 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
         // no premine, initial supply of 0, tokens can only
         // be create via proof of work submissions to the mint()
         // function per the ERC918 specification
+
+        // initialize the proof timer
+        timeOfLastProof = now;
     }
 
     // ERC918 getMiningTarget function
@@ -43,6 +47,12 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
     function mint(uint256 nonce) public returns (bool success) {
         // prevent gas racing by setting the maximum gas price to 5 gwei
         require(tx.gasprice < 5 * 1000000000);
+
+        // Calculate time since last reward was given
+        uint timeSinceLastProof = (now - timeOfLastProof);
+         // Rewards cannot be given too quickly
+        require(timeSinceLastProof >  5 seconds);
+        timeOfLastProof = now;
 
         // derive solution hash n
         uint256 n = uint256(
