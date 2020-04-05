@@ -84,5 +84,9 @@ contract Spark0xBitcoinSwapper {
 4. A generic token for thottling external of-chain services with proof of work
 5. Triangular arbitrage between EIP918 tokens without having to use ETH or USD tethers. Example: KIWI-Spark-0xBitcoin This would provide market liquidity for tokens.
 
-# Ropsten Testnet Deployment
+## Ropsten Testnet Deployment
 https://ropsten.etherscan.io/address/0x1ce8d42bde881b7846bc525e968e3a50a032781d
+
+## References
+
+Spark Token was inspired by [FuelToken](https://github.com/snissn/FuelToken) designed by [@mikers](https://github.com/snissn)
