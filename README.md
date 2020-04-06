@@ -86,7 +86,7 @@ contract Spark0xBitcoinSwapper {
   
   function buySpark(uint bitcoins) public {
      // calulate amount of EIP918 tokens
-    uint amount =  sparks / btc.getDifficulty() * btc.getReward();
+    uint amount =  btc.getDifficulty() * bitcoins / btc.getReward();
     
     // transfer 0xbitcoins to this contract
     erc20Btc.transferFrom(msg.sender, this, bitcoins);
