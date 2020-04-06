@@ -22,16 +22,16 @@ Spark tokens are relatively competatively fair with a very low difficulty floor 
 function mint(uint256 nonce) public returns (bool success) {
     // prevent gas racing by setting the maximum gas price to 5 gwei
     require(tx.gasprice < 5 * 1000000000);
-    
+
     // Calculate time since last reward was given
     uint timeSinceLastProof = (now - timeOfLastProof);
-    // Rewards cannot be given too quickly
+     // Rewards cannot be given too quickly
     require(timeSinceLastProof >  5 seconds);
     timeOfLastProof = now;
-        
+
     // derive solution hash n
     uint256 n = uint256(
-        keccak256(abi.encodePacked(currentChallenge, msg.sender, nonce))
+        keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
     );
     // check that the minimum difficulty is met
     require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
@@ -39,12 +39,12 @@ function mint(uint256 nonce) public returns (bool success) {
     // reward the mining difficulty - the number of zeros on the PoW solution
     uint256 reward = MAXIMUM_TARGET.div(n);
     // emit Mint Event
-    emit Mint(msg.sender, reward, 0, currentChallenge);
+    emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
     // update the challenge to prevent proof resubmission
-    currentChallenge = keccak256(
+    senderChallenges[msg.sender] = keccak256(
         abi.encodePacked(
             nonce,
-            currentChallenge,
+            senderChallenges[msg.sender],
             now,
             blockhash(block.number - 1)
         )
