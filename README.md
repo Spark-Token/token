@@ -11,6 +11,14 @@ t = target_difficulty / MAX_TARGET
 
 In the above scenario the mining for target would provide the miner with at least 10 Spark tokens. Since the mining process itself is random, the resulting solution could also be higher providing a higher payout than with traditional difficulty adjusted/block reward based tokens.
 
+### Advantages
+
+* Distribution Efficiency: Spark Tokens provide a 1:1 mapping directly to a solution's difficulty. With difficulty-scheduled currencies a difficulty floor must be met and then a fixed number of tokens are rewarded. For example, if the difficulty on Kiwi is 100 and you submit a solution that is of 500 difficulty, you are still compensated the same number of tokens as a reward. The Spark smart contract measures the difficulty of the submitted solution and mints the exact number of tokens in turn.
+
+* Energy Savings: Spark Tokens use much less electricity than difficulty-scheduled tokens because they remove the need for network competition. There is no race to submit your solution, as each challenge is tied to individual mining accounts, so there is zero wasted hash power in the production of Sparks. The reward is purely based on work performed. In fact you could accumulate as much difficulty as you want to, for as long as you want to, and submit it to the contract at any time without penalty. These energy savings benefit miners, pool relayers and the planet.
+
+* Portability: Sparks are utility tokens that can be used to transfer value between any Mineable Token (EIP918 compatible). They are designed to represent proof of work and can be atomically applied to many scenarios. They may be useful in backing NFTs with proofs of work as a store of value, providing gated functions on smart contracts or creating fair, decentralized EIP918 token swaps.
+
 ### Minting Spark Tokens
 
 Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of Work nonce is discovered by mining clients, the solution is hashed with the contract's challenge number and miner address and then checked that it meets required difficulty levels. ( The minimum difficulty of the Spark Token being 1 )
@@ -50,7 +58,7 @@ function mint(uint256 nonce) public returns (bool success) {
 }
 ```
 
-### Scenario: EIP918 Token Swap
+### Usage Scenario 1: EIP918 Token Swap
 
 For example if I wanted to mine 100 Spark Tokens I would tell my miner to target a difficulty of 100. My miner could come back with a solution that is of 112, since it only checks that a random nonce has a *minimum* difficulty of 100. I would submit the solution to the Spark contract and receive 112 Spark Tokens in return. Since Spark Tokens use the same difficulty system as 0xbitcoin, KIWI, and others, I could conceivably trade difficulty for the appropriate amount of tokens. So, given that the current difficulty of 0xBitcoin is 1,179,290,918, I should be able to trade an equal amount of Spark Tokens for the block reward ( 50 0xBTC ). In the same respect, as a small miner that has mined 100,000 Spark Tokens, I am be able to perform a similar calculation to receive the appropriate fractional amount of tokens as such:
 
@@ -79,7 +87,7 @@ contract Spark0xBitcoinSwapper {
 
 ```
 
-### Scenario: Smart Contract and off-chain Throttling
+### Usage Scenario 2: Smart Contract and off-chain Throttling
 
 Since Spark Tokens are work proofs, they can be used as generalized throttling mechanisms to economically de-incentivize bad actors from DDOS-ing or incorrectly updating application state for nefarious reasons. This can be acheived with on chain and off chain services.
 
