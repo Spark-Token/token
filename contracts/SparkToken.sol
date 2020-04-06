@@ -8,9 +8,10 @@ import "./ERC918Interface.sol";
 contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
     using SafeMath for uint256;
     uint public timeOfLastProof;
-    bytes32 public currentChallenge;
     uint256 public MINIMUM_TARGET = 2**16;
     uint256 public MAXIMUM_TARGET = 2**234;
+
+    mapping (address => bytes32) public senderChallenges;
 
     constructor() public ERC20Detailed("Spark Token", "SPARK", 0) {
         // no premine, initial supply of 0, tokens can only
@@ -40,7 +41,7 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
 
     // ERC918 getChallengeNumber function
     function getChallengeNumber() external view returns (bytes32) {
-        return currentChallenge;
+        return senderChallenges[msg.sender];
     }
 
     // ERC918 mint function
@@ -56,7 +57,7 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
 
         // derive solution hash n
         uint256 n = uint256(
-            keccak256(abi.encodePacked(currentChallenge, msg.sender, nonce))
+            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
         );
         // check that the minimum difficulty is met
         require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
@@ -64,12 +65,12 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
         // reward the mining difficulty - the number of zeros on the PoW solution
         uint256 reward = MAXIMUM_TARGET.div(n);
         // emit Mint Event
-        emit Mint(msg.sender, reward, 0, currentChallenge);
+        emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
         // update the challenge to prevent proof resubmission
-        currentChallenge = keccak256(
+        senderChallenges[msg.sender] = keccak256(
             abi.encodePacked(
                 nonce,
-                currentChallenge,
+                senderChallenges[msg.sender],
                 now,
                 blockhash(block.number - 1)
             )
