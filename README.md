@@ -116,6 +116,7 @@ contract Throttled {
         _;
     }
     
+    // ensure end users are mining against the proper challenge
     function getChallenge() public returns (uint) {
         return sparkEIP918.getChallenge();
     }
