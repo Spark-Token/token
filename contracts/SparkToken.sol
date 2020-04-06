@@ -48,6 +48,7 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
         return senderChallenges[user];
     }
 
+    // get the mining difficulty of a nonce
     function getMiningDifficulty(uint nonce) public view returns (uint) {
         uint n = uint(
             keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
