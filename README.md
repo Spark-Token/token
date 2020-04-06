@@ -73,7 +73,7 @@ contract Spark0xBitcoinSwapper {
   ERC20 erc20Btc = ERC20(0xb6ed7644c69416d67b522e20bc294a9a9b405b31);
   ERC20 spark = ERC20(0xSPARKADDRESS);
   
-  function swap(uint sparks) {
+  function buy0xBitcoin(uint sparks) public {
     // calulate amount of EIP918 tokens
     uint amount =  sparks / btc.getDifficulty() * btc.getReward();
     
@@ -82,6 +82,17 @@ contract Spark0xBitcoinSwapper {
     
     // send 0xbitcoin to sender
     erc20Btc.transfer(amount, msg.sender);
+  }
+  
+  function buySpark(uint bitcoins) public {
+     // calulate amount of EIP918 tokens
+    uint amount =  sparks / btc.getDifficulty() * btc.getReward();
+    
+    // transfer 0xbitcoins to this contract
+    erc20Btc.transferFrom(msg.sender, this, bitcoins);
+    
+    // send sparks to sender
+    spark.transfer(amount, msg.sender);
   }
 }
 
