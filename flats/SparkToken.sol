@@ -625,20 +625,27 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
         return senderChallenges[msg.sender];
     }
 
+    function getMiningDifficulty(uint nonce) public view returns (uint) {
+        uint n = uint(
+            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
+        );
+        return MAXIMUM_TARGET.div(n);
+    }
+
     // ERC918 mint function
-    function mint(uint256 nonce) public returns (bool success) {
+    function mint(uint nonce) public returns (bool success) {
         // prevent gas racing by setting the maximum gas price to 5 gwei
         require(tx.gasprice < 5 * 1000000000);
 
         // derive solution hash n
-        uint256 n = uint256(
+        uint n = uint(
             keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
         );
         // check that the minimum difficulty is met
         require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
 
         // reward the mining difficulty - the number of zeros on the PoW solution
-        uint256 reward = MAXIMUM_TARGET.div(n);
+        uint reward = MAXIMUM_TARGET.div(n);
         // emit Mint Event
         emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
         // update the challenge to prevent proof resubmission
