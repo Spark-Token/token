@@ -587,9 +587,11 @@ pragma solidity ^0.5.1;
 
 
 contract SparkToken is ERC20, ERC20Detailed, ERC918 {
-    using SafeMath for uint256;
-    uint256 public MINIMUM_TARGET = 2**16;
-    uint256 public MAXIMUM_TARGET = 2**234;
+    using SafeMath for uint;
+    uint public timeOfLastProof;
+    uint public MINIMUM_TARGET = 2**16;
+    uint public MAXIMUM_TARGET = 2**234;
+    uint public DEFAULT_TARGET_DIFFICULTY = 2**16;
 
     mapping (address => bytes32) public senderChallenges;
 
@@ -597,6 +599,9 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
         // no premine, initial supply of 0, tokens can only
         // be create via proof of work submissions to the mint()
         // function per the ERC918 specification
+
+        // initialize the proof timer for the default mint function
+        timeOfLastProof = now;
     }
 
     // ERC918 getMiningTarget function
@@ -627,27 +632,36 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
     }
 
     // get the mining difficulty of a nonce
-    function getMiningDifficulty(uint nonce) public view returns (uint) {
+    function getMiningDifficulty(uint nonce, uint targetDifficulty) public view returns (uint) {
         uint n = uint(
-            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
+            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce, targetDifficulty))
         );
         return MAXIMUM_TARGET.div(n);
     }
 
-    // ERC918 mint function
+    // default ERC918 mint function using relavtively small default target difficulty
     function mint(uint nonce) public returns (bool success) {
+        // add time based throttle to default mint since difficulty is low 
+        uint timeSinceLastProof = (now - timeOfLastProof);
+        require(timeSinceLastProof >  5 seconds);
+        timeOfLastProof = now;
+        return mint(nonce, DEFAULT_TARGET_DIFFICULTY);
+    }
+
+    // mint function with variable difficulty
+    function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
         // prevent gas racing by setting the maximum gas price to 5 gwei
         require(tx.gasprice < 5 * 1000000000);
 
         // derive solution hash n
         uint n = uint(
-            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
+            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce, targetDifficulty))
         );
         // check that the minimum difficulty is met
         require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
 
-        // reward the mining difficulty - the number of zeros on the PoW solution
-        uint reward = MAXIMUM_TARGET.div(n);
+        // reward the target difficulty - the number of zeros on the PoW solution
+        uint reward = targetDifficulty;
         // emit Mint Event
         emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
         // update the challenge to prevent proof resubmission
