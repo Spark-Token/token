@@ -58,7 +58,7 @@ function mint(uint256 nonce) public returns (bool success) {
 }
 ```
 
-### Scenario: EIP918 Token Swap
+### Usage Scenario 1: EIP918 Token Swap
 
 For example if I wanted to mine 100 Spark Tokens I would tell my miner to target a difficulty of 100. My miner could come back with a solution that is of 112, since it only checks that a random nonce has a *minimum* difficulty of 100. I would submit the solution to the Spark contract and receive 112 Spark Tokens in return. Since Spark Tokens use the same difficulty system as 0xbitcoin, KIWI, and others, I could conceivably trade difficulty for the appropriate amount of tokens. So, given that the current difficulty of 0xBitcoin is 1,179,290,918, I should be able to trade an equal amount of Spark Tokens for the block reward ( 50 0xBTC ). In the same respect, as a small miner that has mined 100,000 Spark Tokens, I am be able to perform a similar calculation to receive the appropriate fractional amount of tokens as such:
 
@@ -87,7 +87,7 @@ contract Spark0xBitcoinSwapper {
 
 ```
 
-### Scenario: Smart Contract and off-chain Throttling
+### Usage Scenario 2: Smart Contract and off-chain Throttling
 
 Since Spark Tokens are work proofs, they can be used as generalized throttling mechanisms to economically de-incentivize bad actors from DDOS-ing or incorrectly updating application state for nefarious reasons. This can be acheived with on chain and off chain services.
 
