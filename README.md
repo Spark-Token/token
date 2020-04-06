@@ -144,7 +144,7 @@ nodejs pseudocode:
 const Web3 = require('web3')
 const web3 = new Web3()
 const spark = require('./lib/SparkToken')
-const targetAddress = 0xSomeUserOrContract
+const serviceAddress = 0xServiceAddress
 
 const MIN_DIFFICULTY = 1000
 
@@ -152,7 +152,7 @@ const MIN_DIFFICULTY = 1000
 // to be sent to the target address in order to execute
 function doSomething(msgSender, tokens){
     if (tokens < MIN_DIFFICULTY || 
-        !sparkERC20.transferFrom(msgSender,tokens,targetAddress) ) {
+        !sparkERC20.transferFrom(msgSender,tokens,serviceAddress) ) {
         throw 'difficulty not met'
     }
     ...
@@ -160,11 +160,13 @@ function doSomething(msgSender, tokens){
 
 // function to handle request, requires 1000 Spark Tokens
 // to be sent to the target address in order to execute
-function doSomethingElse(msgSender, nonce){
+// end users must mine against getChallengeNumber(serviceAddress)
+function doSomethingElse(nonce){
     if (sparkERC20.getMiningDifficulty(nonce) < MIN_DIFFICULTY ) {
         throw 'difficulty not met'
     }
-    if(!sparkEIP918.mint(nonce, {from: targetAddress})){
+    // mint difficulty directly to target service owner
+    if(!sparkEIP918.mint(nonce, {from: serviceAddress})){
         throw 'unable to mine nonce'
     }
     ...
