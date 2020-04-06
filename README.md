@@ -23,21 +23,22 @@ Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of
 
 Spark tokens are relatively competatively fair with a very low difficulty floor (1) that miners have to adhere to. This means that if you mine 1,000,000,000 tokens or just 1 you have the same advantage in submitting your solution. This important feature of the token levels the playing field for smaller miners looking to accumulate hashpower independently.
 
+Primary mint function:
 ```solidity
-// ERC918 mint function
-function mint(uint256 nonce) public returns (bool success) {
+// mint function with variable difficulty
+function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
     // prevent gas racing by setting the maximum gas price to 5 gwei
     require(tx.gasprice < 5 * 1000000000);
 
     // derive solution hash n
-    uint256 n = uint256(
-        keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
+    uint n = uint(
+        keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce, targetDifficulty))
     );
     // check that the minimum difficulty is met
     require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
 
-    // reward the mining difficulty - the number of zeros on the PoW solution
-    uint256 reward = MAXIMUM_TARGET.div(n);
+    // reward the target difficulty - the number of zeros on the PoW solution
+    uint reward = targetDifficulty;
     // emit Mint Event
     emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
     // update the challenge to prevent proof resubmission
@@ -53,6 +54,18 @@ function mint(uint256 nonce) public returns (bool success) {
     // perform the mint operation
     _mint(msg.sender, reward);
     return true;
+}
+```
+
+ERC918 mint function using default difficulty of 2**16. Note that this function contains a 5 second time throttle to help prevent collisions
+```solidity
+// default ERC918 mint function using relavtively small default target difficulty
+function mint(uint nonce) public returns (bool success) {
+    // add time based throttle to default mint since difficulty is low 
+    uint timeSinceLastProof = (now - timeOfLastProof);
+    require(timeSinceLastProof >  5 seconds);
+    timeOfLastProof = now;
+    return mint(nonce, DEFAULT_TARGET_DIFFICULTY);
 }
 ```
 
