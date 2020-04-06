@@ -50,7 +50,7 @@ function mint(uint256 nonce) public returns (bool success) {
 }
 ```
 
-### Example Scenario
+### Scenario: EIP918 Token Swap
 
 For example if I wanted to mine 100 Spark Tokens I would tell my miner to target a difficulty of 100. My miner could come back with a solution that is of 112, since it only checks that a random nonce has a *minimum* difficulty of 100. I would submit the solution to the Spark contract and receive 112 Spark Tokens in return. Since Spark Tokens use the same difficulty system as 0xbitcoin, KIWI, and others, I could conceivably trade difficulty for the appropriate amount of tokens. So, given that the current difficulty of 0xBitcoin is 1,179,290,918, I should be able to trade an equal amount of Spark Tokens for the block reward ( 50 0xBTC ). In the same respect, as a small miner that has mined 100,000 Spark Tokens, I am be able to perform a similar calculation to receive the appropriate fractional amount of tokens as such:
 
@@ -61,7 +61,7 @@ Since 0xBitcoin, KIWI and other EIP918 tokens have a deterministic difficulty, a
 ```solidity
 contract Spark0xBitcoinSwapper {
   // 0xBitcoin
-  EIP918Interface btc = EIP918Interface(0xb6ed7644c69416d67b522e20bc294a9a9b405b31);
+  EIP918 btc = EIP918(0xb6ed7644c69416d67b522e20bc294a9a9b405b31);
   ERC20 erc20Btc = ERC20(0xb6ed7644c69416d67b522e20bc294a9a9b405b31);
   ERC20 spark = ERC20(0xSPARKADDRESS);
   
@@ -79,6 +79,62 @@ contract Spark0xBitcoinSwapper {
 
 ```
 
+### Scenario: Smart Contract and off-chain Throttling
+
+Since Spark Tokens are work proofs, they can be used as generalized throttling mechanisms to economically de-incentivize bad actors from DDOS-ing or incorrectly updating application state for nefarious reasons. This can be acheived with on chain and off chain services.
+
+For example, if I wanted to create an Ethereum Smart contract that required additional security I could create a function modifier that requires a certain number of Spark Tokens to execute:
+
+Smart Contract:
+```solidity
+contract Throttled {
+
+    EIP918 sparkEIP918 = EIP918(0xSPARKADDRESS);
+    ERC20 sparkERC20 = ERC20(0xSPARKADDRESS);
+
+    // require that a number of spark tokens need to be sent
+    // to this contract in order to execute target function
+    modifier difficulty(uint tokens) {
+        require(
+            sparkERC20.transferFrom(msg.sender,tokens,this);
+        );
+        _;
+    }
+    
+    // require a solution of a minimum difficulty be used
+    // this modifier submits a solution to the Spark contract
+    // and the resulting tokens are received by this contract
+    // effectively allowing a user to submit a proof instead of
+    // tokens directly
+    modifier difficulty(uint nonce, uint diff) {
+        require(
+            sparkEIP918.getMiningDifficulty(nonce) >= diff
+        );
+        require(
+            sparkEIP918.mint(nonce)
+        );
+        _;
+    }
+    
+    function getChallenge() public returns (uint) {
+        return sparkEIP918.getChallenge();
+    }
+}
+
+contract MyContract is Throttled {
+    
+    // require that the method use 1000 difficulty in order to execute
+    function doSomething() public difficulty(1000) {
+        ...
+    }
+    
+    // require sender to supply a solution proof of a certain difficulty
+    function doSomethingElse(uint nonce) public difficulty(nonce, 1000) {
+        ...
+    }
+}
+```
+
 ## Other Uses
 
 1. Arbitrage mining against flucuating 0xBitcoin, KIWI, etc. difficulty. Difficulty Tokens allow miners to store difficulty when 0xBitcoin diff is high and sell it back when diff is low.
@@ -88,11 +144,11 @@ contract Spark0xBitcoinSwapper {
 5. Triangular arbitrage between EIP918 tokens without having to use ETH or USD tethers. Example: KIWI-Spark-0xBitcoin This would provide market liquidity for tokens.
 
 ## Ropsten Testnet Deployment
-https://ropsten.etherscan.io/address/0x8db186be9780e826c60ab9535026084c7e579eab
+https://ropsten.etherscan.io/address/0xdd3f5c78d589db917591f2f5abd2fae93e8e7b96
 
 ## References
 
 Spark Token was inspired by:
 * [FuelToken](https://github.com/snissn/FuelToken) designed by [@mikers](https://github.com/snissn) ( don't forget to [mine](http://mike.rs/) with @mikers )
-* [MinableToken](https://github.com/liberation-online/MineableToken) designed by [@adamjamesmartin](https://github.com/adamjamesmartin) of the [KIWI project](https://kiwi-token.com/)
+* [MineableToken](https://github.com/liberation-online/MineableToken) designed by [@adamjamesmartin](https://github.com/adamjamesmartin) of the [KIWI project](https://kiwi-token.com/)
 * [0xBitcoin](https://etherscan.io/address/0xb6ed7644c69416d67b522e20bc294a9a9b405b31#code) designed by [@Infernal_toast](https://github.com/admazzola) of the [0xBitcoin Project](https://0xbitcoin.org/)
