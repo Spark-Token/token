@@ -43,6 +43,11 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
         return senderChallenges[msg.sender];
     }
 
+    // get the challenge number for a certain address, useful for delegated mining
+    function getChallengeNumber(address user) external view returns (bytes32) {
+        return senderChallenges[user];
+    }
+
     function getMiningDifficulty(uint nonce) public view returns (uint) {
         uint n = uint(
             keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce))
