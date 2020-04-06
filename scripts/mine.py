@@ -5,26 +5,33 @@ from random import getrandbits
 # adapted from https://github.com/snissn/0xbitcoinminer-reference-implementation/blob/master/mine.py
 
 MAX_TARGET = 2**234
+DEFAULT_TARGET_DIFFICULTY = 2**16
 
 def generate_nonce():
 	myhex =  b'%064x' % getrandbits(32*8)
 	return codecs.decode(myhex, 'hex_codec')
 
+# mine against the default difficulty
+def mineDefault(challenge, public_key):
+	return mine(challenge, public_key, DEFAULT_TARGET_DIFFICULTY)
+
+# mine against a variable difficulty
 def mine(challenge, public_key, target_difficulty):
 	target = MAX_TARGET / target_difficulty
 	while True:
 		nonce = generate_nonce()
-		hash1 = int(sha3.keccak_256(challenge+public_key+nonce).hexdigest(), 16)
+		hash1 = int(sha3.keccak_256(challenge+public_key+nonce+target_difficulty).hexdigest(), 16)
 		if hash1 < target:
 			return nonce, hash1
 
 def main():
 	# current challenge hex
-	challenge_hex = '0000000000000000000000000000000000000000000000000000000000000000' 
+	# challenge_hex = '0000000000000000000000000000000000000000000000000000000000000000' 
+	challenge_hex = 'e1f814183cc657603e3d1d369b0b3419e232b4b68e471b74ad5e1626ccd5b467'
 	challenge = codecs.decode(challenge_hex,'hex_codec')
 
 	# miner ethereum public key without leading 0x
-	public_key_hex = 'CA35b7d915458EF540aDe6068dFe2F44E8fa733c' 
+	public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086' 
 	public_key = codecs.decode(public_key_hex,'hex_codec')
 
 	# miner sets the target difficulty to mine
