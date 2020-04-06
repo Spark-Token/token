@@ -83,7 +83,7 @@ contract Spark0xBitcoinSwapper {
 
 Since Spark Tokens are work proofs, they can be used as generalized throttling mechanisms to economically de-incentivize bad actors from DDOS-ing or incorrectly updating application state for nefarious reasons. This can be acheived with on chain and off chain services.
 
-For example, if I wanted to create an Ethereum Smart contract that required additional security I could create a function modifier that requires a certain number of Spark Tokens to execute:
+For example, if I wanted to create an Ethereum Smart contract that required additional proof of work security I could create a function modifier that requires a certain number of Spark Tokens to execute (see difficulty(tokens) function). Alternatively, I could have the end user submit a nonce of required difficulty instead of tokens, and mine them directly to the contract. (see difficulty(uint nonce, uint diff) function)
 
 Solidity pseudocode:
 ```solidity
@@ -130,6 +130,8 @@ contract MyContract is Throttled {
     }
     
     // require sender to supply a solution proof of a certain difficulty
+    // note that senders must use this contract's getChallenge() method
+    // in order to mine Spark Tokens directly to the contract as payment
     function doSomethingElse(uint nonce) public difficulty(nonce, 1000) {
         ...
     }
