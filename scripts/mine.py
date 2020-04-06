@@ -18,20 +18,23 @@ def mineDefault(challenge, public_key):
 # mine against a variable difficulty
 def mine(challenge, public_key, target_difficulty):
 	target = MAX_TARGET / target_difficulty
+	target_difficulty_hex = "{0:0{1}x}".format(target_difficulty, 64)
+	td = codecs.decode(target_difficulty_hex,'hex_codec')
 	while True:
 		nonce = generate_nonce()
-		hash1 = int(sha3.keccak_256(challenge+public_key+nonce+target_difficulty).hexdigest(), 16)
+		hash1 = int(sha3.keccak_256(challenge+public_key+nonce+td).hexdigest(), 16)
 		if hash1 < target:
 			return nonce, hash1
 
 def main():
 	# current challenge hex
 	# challenge_hex = '0000000000000000000000000000000000000000000000000000000000000000' 
-	challenge_hex = 'e1f814183cc657603e3d1d369b0b3419e232b4b68e471b74ad5e1626ccd5b467'
+	challenge_hex = '4cb66343952742f6f76e02702044e4dfe3a4ae1877b2fab197cf97616ee7a0bd'
 	challenge = codecs.decode(challenge_hex,'hex_codec')
 
 	# miner ethereum public key without leading 0x
-	public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086' 
+	# public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086' 
+	public_key_hex = 'CA35b7d915458EF540aDe6068dFe2F44E8fa733c'
 	public_key = codecs.decode(public_key_hex,'hex_codec')
 
 	# miner sets the target difficulty to mine

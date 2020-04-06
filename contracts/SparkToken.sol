@@ -34,9 +34,9 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
 
     // ERC918 getMiningDifficulty function
     // the number of zeroes the digest of the PoW solution requires
-    // minimum is 1
+    // minimum is 2**16
     function getMiningDifficulty() public view returns (uint256) {
-        return 1;
+        return DEFAULT_TARGET_DIFFICULTY;
     }
 
     // ERC918 getChallengeNumber function
