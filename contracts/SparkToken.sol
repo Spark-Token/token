@@ -2,10 +2,9 @@ pragma solidity ^0.5.1;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
-import "./ERC918Interface.sol";
+import "./ERC918.sol";
 
-
-contract SparkToken is ERC20, ERC20Detailed, ERC918Interface {
+contract SparkToken is ERC20, ERC20Detailed, ERC918 {
     using SafeMath for uint256;
     uint public timeOfLastProof;
     uint256 public MINIMUM_TARGET = 2**16;
