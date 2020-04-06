@@ -6,7 +6,6 @@ import "./ERC918.sol";
 
 contract SparkToken is ERC20, ERC20Detailed, ERC918 {
     using SafeMath for uint256;
-    uint public timeOfLastProof;
     uint256 public MINIMUM_TARGET = 2**16;
     uint256 public MAXIMUM_TARGET = 2**234;
 
@@ -16,9 +15,6 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
         // no premine, initial supply of 0, tokens can only
         // be create via proof of work submissions to the mint()
         // function per the ERC918 specification
-
-        // initialize the proof timer
-        timeOfLastProof = now;
     }
 
     // ERC918 getMiningTarget function
