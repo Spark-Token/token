@@ -83,9 +83,9 @@ contract Spark0xBitcoinSwapper {
 
 Since Spark Tokens are work proofs, they can be used as generalized throttling mechanisms to economically de-incentivize bad actors from DDOS-ing or incorrectly updating application state for nefarious reasons. This can be acheived with on chain and off chain services.
 
-For example, if I wanted to create an Ethereum Smart contract that required additional security I could create a function modifier that requires a certain number of Spark Tokens to execute:
+For example, if I wanted to create an Ethereum Smart contract that required additional proof of work security I could create a function modifier that requires a certain number of Spark Tokens to execute (see difficulty(tokens) function). Alternatively, I could have the end user submit a nonce of required difficulty instead of tokens, and mine them directly to the contract. (see difficulty(uint nonce, uint diff) function)
 
-Smart Contract:
+Solidity pseudocode:
 ```solidity
 contract Throttled {
 
@@ -116,6 +116,7 @@ contract Throttled {
         _;
     }
     
+    // ensure end users are mining against the proper challenge
     function getChallenge() public returns (uint) {
         return sparkEIP918.getChallenge();
     }
@@ -129,9 +130,46 @@ contract MyContract is Throttled {
     }
     
     // require sender to supply a solution proof of a certain difficulty
+    // note that senders must use this contract's getChallenge() method
+    // in order to mine Spark Tokens directly to the contract as payment
     function doSomethingElse(uint nonce) public difficulty(nonce, 1000) {
         ...
     }
+}
+```
+
+nodejs pseudocode:
+
+```javascript
+const Web3 = require('web3')
+const web3 = new Web3()
+const spark = require('./lib/SparkToken')
+const serviceAddress = 0xServiceAddress
+
+const MIN_DIFFICULTY = 1000
+
+// function to handle request, requires 1000 Spark Tokens
+// to be sent to the target address in order to execute
+function doSomething(msgSender, tokens){
+    if (tokens < MIN_DIFFICULTY || 
+        !sparkERC20.transferFrom(msgSender,tokens,serviceAddress) ) {
+        throw 'difficulty not met'
+    }
+    ...
+}
+
+// function to handle request, requires 1000 Spark Tokens
+// to be sent to the target address in order to execute
+// end users must mine against getChallengeNumber(serviceAddress)
+function doSomethingElse(nonce){
+    if (sparkERC20.getMiningDifficulty(nonce) < MIN_DIFFICULTY ) {
+        throw 'difficulty not met'
+    }
+    // mint difficulty directly to target service owner
+    if(!sparkEIP918.mint(nonce, {from: serviceAddress})){
+        throw 'unable to mine nonce'
+    }
+    ...
 }
 ```
 
