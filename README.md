@@ -85,7 +85,7 @@ Since Spark Tokens are work proofs, they can be used as generalized throttling m
 
 For example, if I wanted to create an Ethereum Smart contract that required additional security I could create a function modifier that requires a certain number of Spark Tokens to execute:
 
-Smart Contract:
+Solidity pseudocode:
 ```solidity
 contract Throttled {
 
@@ -133,6 +133,39 @@ contract MyContract is Throttled {
     function doSomethingElse(uint nonce) public difficulty(nonce, 1000) {
         ...
     }
+}
+```
+
+nodejs pseudocode:
+
+```javascript
+const Web3 = require('web3')
+const web3 = new Web3()
+const spark = require('./lib/SparkToken')
+const targetAddress = 0xSomeUserOrContract
+
+const MIN_DIFFICULTY = 1000
+
+// function to handle request, requires 1000 Spark Tokens
+// to be sent to the target address in order to execute
+function doSomething(msgSender, tokens){
+    if (tokens < MIN_DIFFICULTY || 
+        !sparkERC20.transferFrom(msgSender,tokens,targetAddress) ) {
+        throw 'difficulty not met'
+    }
+    ...
+}
+
+// function to handle request, requires 1000 Spark Tokens
+// to be sent to the target address in order to execute
+function doSomethingElse(msgSender, nonce){
+    if (sparkERC20.getMiningDifficulty(nonce) < MIN_DIFFICULTY ) {
+        throw 'difficulty not met'
+    }
+    if(!sparkEIP918.mint(nonce, {from: targetAddress})){
+        throw 'unable to mine nonce'
+    }
+    ...
 }
 ```
 
