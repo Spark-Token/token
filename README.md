@@ -11,6 +11,14 @@ t = target_difficulty / MAX_TARGET
 
 In the above scenario the mining for target would provide the miner with at least 10 Spark tokens. Since the mining process itself is random, the resulting solution could also be higher providing a higher payout than with traditional difficulty adjusted/block reward based tokens.
 
+### Advantages
+
+* Distribution Efficiency: Spark Tokens provide a 1:1 mapping directly to a solution's difficulty. With difficulty-scheduled currencies a difficulty floor must be met and then a fixed number of tokens are rewarded. For example, if the difficulty on Kiwi is 100 and you submit a solution that is of 500 difficulty, you are still compensated the same number of tokens as a reward. The Spark smart contract measures the difficulty of the submitted solution and mints the exact number of tokens in turn.
+
+* Energy Savings: Spark Tokens use much less electricity than difficulty-scheduled tokens because they remove the need for network competition. There is no race to submit your solution, as each challenge is tied to individual mining accounts, so there is zero wasted hash power in the production of Sparks. The reward is purely based on work performed. In fact you could accumulate as much difficulty as you want to, for as long as you want to, and submit it to the contract at any time without penalty. These energy savings benefit miners, pool relayers and the planet.
+
+* Portability: Sparks are utility tokens that can be used to transfer value between any Mineable Token (EIP918 compatible). They are designed to represent proof of work and can be atomically applied to many scenarios. They may be useful in backing NFTs with proofs of work as a store of value, providing gated functions on smart contracts or creating fair, decentralized EIP918 token swaps.
+
 ### Minting Spark Tokens
 
 Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of Work nonce is discovered by mining clients, the solution is hashed with the contract's challenge number and miner address and then checked that it meets required difficulty levels. ( The minimum difficulty of the Spark Token being 1 )
