@@ -2,6 +2,8 @@ import sha3 # pip3 install ethereum
 import codecs
 from random import getrandbits
 
+# adapted from https://github.com/snissn/0xbitcoinminer-reference-implementation/blob/master/mine.py
+
 MAX_TARGET = 2**234
 
 def generate_nonce():
