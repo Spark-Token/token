@@ -88,7 +88,7 @@ contract Spark0xBitcoinSwapper {
 5. Triangular arbitrage between EIP918 tokens without having to use ETH or USD tethers. Example: KIWI-Spark-0xBitcoin This would provide market liquidity for tokens.
 
 ## Ropsten Testnet Deployment
-https://ropsten.etherscan.io/address/0x8db186be9780e826c60ab9535026084c7e579eab
+https://ropsten.etherscan.io/address/0xdd3f5c78d589db917591f2f5abd2fae93e8e7b96
 
 ## References
 
