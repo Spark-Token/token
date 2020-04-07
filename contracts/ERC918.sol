@@ -10,11 +10,4 @@ interface ERC918 {
     function getMiningTarget() external view returns (uint256);
 
     function getMiningReward() external view returns (uint256);
-
-    event Mint(
-        address indexed miner,
-        uint256 rewardAmount,
-        uint256 epochCount,
-        bytes32 newChallengeNumber
-    );
 }

@@ -1,10 +1,9 @@
 pragma solidity ^0.5.1;
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20Detailed.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC777/ERC777.sol";
 import "./ERC918.sol";
 
-contract SparkToken is ERC20, ERC20Detailed, ERC918 {
+contract SparkToken is ERC777, ERC918 {
     using SafeMath for uint;
     uint public timeOfLastProof;
     uint public MINIMUM_TARGET = 2**16;
@@ -13,7 +12,7 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
 
     mapping (address => bytes32) public senderChallenges;
 
-    constructor() public ERC20Detailed("Spark Token", "SPARK", 0) {
+    constructor() public ERC777("Spark", "SPARK", new address[](0)) {
         // no premine, initial supply of 0, tokens can only
         // be create via proof of work submissions to the mint()
         // function per the ERC918 specification
@@ -80,8 +79,7 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
 
         // reward the target difficulty - the number of zeros on the PoW solution
         uint reward = targetDifficulty;
-        // emit Mint Event
-        emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
+        
         // update the challenge to prevent proof resubmission
         senderChallenges[msg.sender] = keccak256(
             abi.encodePacked(
@@ -93,7 +91,7 @@ contract SparkToken is ERC20, ERC20Detailed, ERC918 {
         );
 
         // perform the mint operation
-        _mint(msg.sender, reward);
+        _mint(msg.sender, msg.sender, reward, "", "");
         return true;
     }
 }

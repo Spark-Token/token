@@ -29,16 +29,16 @@ def mine(challenge, public_key, target_difficulty):
 def main():
 	# current challenge hex
 	# challenge_hex = '0000000000000000000000000000000000000000000000000000000000000000' 
-	challenge_hex = '4cb66343952742f6f76e02702044e4dfe3a4ae1877b2fab197cf97616ee7a0bd'
+	challenge_hex = '5e0bde1f370bc931d48c4404fe4f79092cc693303f55cc9f151f68099e0db791'
 	challenge = codecs.decode(challenge_hex,'hex_codec')
 
 	# miner ethereum public key without leading 0x
-	# public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086' 
-	public_key_hex = 'CA35b7d915458EF540aDe6068dFe2F44E8fa733c'
+	public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086' 
+	# public_key_hex = 'CA35b7d915458EF540aDe6068dFe2F44E8fa733c'
 	public_key = codecs.decode(public_key_hex,'hex_codec')
 
 	# miner sets the target difficulty to mine
-	target_difficulty = 2
+	target_difficulty = 3
 
 	target = MAX_TARGET / target_difficulty
 	print("Target Difficulty:", target_difficulty )
