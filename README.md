@@ -39,8 +39,7 @@ function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
 
     // reward the target difficulty - the number of zeros on the PoW solution
     uint reward = targetDifficulty;
-    // emit Mint Event
-    emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
+    
     // update the challenge to prevent proof resubmission
     senderChallenges[msg.sender] = keccak256(
         abi.encodePacked(
@@ -52,7 +51,7 @@ function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
     );
 
     // perform the mint operation
-    _mint(msg.sender, reward);
+    _mint(msg.sender, msg.sender, reward, "", "");
     return true;
 }
 ```
