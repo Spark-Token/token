@@ -211,7 +211,7 @@ function doSomethingElse(nonce){
 5. Triangular arbitrage between EIP918 tokens without having to use ETH or USD tethers. Example: KIWI-Spark-0xBitcoin This would provide market liquidity for tokens.
 
 ## Ropsten Testnet Deployment
-https://ropsten.etherscan.io/address/0x61954191dcb2819a1c60b8b2779972c79d4a9380
+https://ropsten.etherscan.io/address/0xdeb4acd3907f495e7498a1deb9cd5accb2b07bcf
 
 ## References
 
