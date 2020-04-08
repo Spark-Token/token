@@ -39,8 +39,7 @@ function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
 
     // reward the target difficulty - the number of zeros on the PoW solution
     uint reward = targetDifficulty;
-    // emit Mint Event
-    emit Mint(msg.sender, reward, 0, senderChallenges[msg.sender]);
+    
     // update the challenge to prevent proof resubmission
     senderChallenges[msg.sender] = keccak256(
         abi.encodePacked(
@@ -52,7 +51,7 @@ function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
     );
 
     // perform the mint operation
-    _mint(msg.sender, reward);
+    _mint(msg.sender, msg.sender, reward, "", "");
     return true;
 }
 ```
@@ -212,7 +211,7 @@ function doSomethingElse(nonce){
 5. Triangular arbitrage between EIP918 tokens without having to use ETH or USD tethers. Example: KIWI-Spark-0xBitcoin This would provide market liquidity for tokens.
 
 ## Ropsten Testnet Deployment
-https://ropsten.etherscan.io/address/0x61954191dcb2819a1c60b8b2779972c79d4a9380
+https://ropsten.etherscan.io/address/0xdeb4acd3907f495e7498a1deb9cd5accb2b07bcf
 
 ## References
 
