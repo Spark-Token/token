@@ -17,6 +17,8 @@ In the above scenario the mining for target would provide the miner with at leas
 
 * Portability: Sparks are utility tokens that can be used to transfer value between any Mineable Token (EIP918 compatible). They are designed to represent proof of work and can be atomically applied to many scenarios. They may be useful in backing NFTs with proofs of work as a store of value, providing gated functions on smart contracts or creating fair, decentralized EIP918 token swaps.
 
+* Offchain mining: Since address challenges are deterministically hash-chained, miners can solve multiple difficulty solutions and submit them in batches once ready. This means more savings for miners and pool operators.
+
 ### Minting Spark Tokens
 
 Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of Work nonce is discovered by mining clients, the solution is hashed with the contract's challenge number and miner address and then checked that it meets required difficulty levels. ( The minimum difficulty of the Spark Token being 1 )
