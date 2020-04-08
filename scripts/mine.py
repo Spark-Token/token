@@ -28,8 +28,8 @@ def mine(challenge, public_key, target_difficulty):
 
 def main():
 	# current challenge hex
-	# challenge_hex = '0000000000000000000000000000000000000000000000000000000000000000' 
-	challenge_hex = '5e0bde1f370bc931d48c4404fe4f79092cc693303f55cc9f151f68099e0db791'
+	challenge_hex = '0000000000000000000000000000000000000000000000000000000000000000' 
+	# challenge_hex = '5e0bde1f370bc931d48c4404fe4f79092cc693303f55cc9f151f68099e0db791'
 	challenge = codecs.decode(challenge_hex,'hex_codec')
 
 	# miner ethereum public key without leading 0x

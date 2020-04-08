@@ -56,6 +56,14 @@ contract SparkToken is ERC777, ERC918 {
         return MAXIMUM_TARGET.div(n);
     }
 
+    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them: 
+    // nextChallenge = keccak( currentChallenge )
+    function mint(uint[] memory nonces) public {
+        for (uint i = 0; i < nonces.length; i++) {
+            require(mint(nonces[i]));
+        }
+    }
+
     // default ERC918 mint function using relavtively small default target difficulty
     function mint(uint nonce) public returns (bool success) {
         // add time based throttle to default mint since difficulty is low 
@@ -65,11 +73,16 @@ contract SparkToken is ERC777, ERC918 {
         return mint(nonce, DEFAULT_TARGET_DIFFICULTY);
     }
 
+    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them: 
+    // nextChallenge = keccak( currentChallenge )
+    function mint(uint[] memory nonces, uint targetDifficulty) public {
+        for (uint i = 0; i < nonces.length; i++) {
+            require(mint(nonces[i], targetDifficulty));
+        }
+    }
+
     // mint function with variable difficulty
     function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
-        // prevent gas racing by setting the maximum gas price to 5 gwei
-        require(tx.gasprice < 5 * 1000000000);
-
         // derive solution hash n
         uint n = uint(
             keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce, targetDifficulty))
@@ -78,15 +91,14 @@ contract SparkToken is ERC777, ERC918 {
         require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
 
         // reward the target difficulty - the number of zeros on the PoW solution
-        uint reward = targetDifficulty;
+        uint reward = targetDifficulty * 10**18;
         
         // update the challenge to prevent proof resubmission
+        // proof challenges are chained and deterministic for 
+        // offchain submissions
         senderChallenges[msg.sender] = keccak256(
             abi.encodePacked(
-                nonce,
-                senderChallenges[msg.sender],
-                now,
-                blockhash(block.number - 1)
+                senderChallenges[msg.sender]
             )
         );
 
