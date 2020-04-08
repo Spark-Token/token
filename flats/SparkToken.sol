@@ -1211,14 +1211,15 @@ pragma solidity ^0.5.1;
 
 
 
-contract SparkToken is ERC777, ERC918 {
-    using SafeMath for uint;
-    uint public timeOfLastProof;
-    uint public MINIMUM_TARGET = 2**16;
-    uint public MAXIMUM_TARGET = 2**234;
-    uint public DEFAULT_TARGET_DIFFICULTY = 2**16;
 
-    mapping (address => bytes32) public senderChallenges;
+contract SparkToken is ERC777, ERC918 {
+    using SafeMath for uint256;
+    uint256 public timeOfLastProof;
+    uint256 public MINIMUM_TARGET = 2**16;
+    uint256 public MAXIMUM_TARGET = 2**234;
+    uint256 public DEFAULT_TARGET_DIFFICULTY = 2**16;
+
+    mapping(address => bytes32) public senderChallenges;
 
     constructor() public ERC777("Spark", "SPARK", new address[](0)) {
         // no premine, initial supply of 0, tokens can only
@@ -1257,57 +1258,81 @@ contract SparkToken is ERC777, ERC918 {
     }
 
     // get the mining difficulty of a nonce
-    function getMiningDifficulty(uint nonce, uint targetDifficulty) public view returns (uint) {
-        uint n = uint(
-            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce, targetDifficulty))
+    function getMiningDifficulty(uint256 nonce, uint256 targetDifficulty)
+        public
+        view
+        returns (uint256)
+    {
+        uint256 n = uint256(
+            keccak256(
+                abi.encodePacked(
+                    senderChallenges[msg.sender],
+                    msg.sender,
+                    nonce,
+                    targetDifficulty
+                )
+            )
         );
         return MAXIMUM_TARGET.div(n);
     }
 
-    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them: 
+    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them:
     // nextChallenge = keccak( currentChallenge )
-    function mint(uint[] memory nonces) public {
-        for (uint i = 0; i < nonces.length; i++) {
+    function mint(uint256[] memory nonces) public returns (bool success) {
+        for (uint256 i = 0; i < nonces.length; i++) {
             require(mint(nonces[i]));
         }
+        return true;
     }
 
     // default ERC918 mint function using relavtively small default target difficulty
-    function mint(uint nonce) public returns (bool success) {
-        // add time based throttle to default mint since difficulty is low 
-        uint timeSinceLastProof = (now - timeOfLastProof);
-        require(timeSinceLastProof >  5 seconds);
+    function mint(uint256 nonce) public returns (bool success) {
+        // add time based throttle to default mint since difficulty is low
+        uint256 timeSinceLastProof = (now - timeOfLastProof);
+        require(timeSinceLastProof > 5 seconds);
         timeOfLastProof = now;
         return mint(nonce, DEFAULT_TARGET_DIFFICULTY);
     }
 
-    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them: 
+    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them:
     // nextChallenge = keccak( currentChallenge )
-    function mint(uint[] memory nonces, uint targetDifficulty) public {
-        for (uint i = 0; i < nonces.length; i++) {
+    function mint(uint256[] memory nonces, uint256 targetDifficulty)
+        public
+        returns (bool success)
+    {
+        for (uint256 i = 0; i < nonces.length; i++) {
             require(mint(nonces[i], targetDifficulty));
         }
+        return true;
     }
 
     // mint function with variable difficulty
-    function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
+    function mint(uint256 nonce, uint256 targetDifficulty)
+        public
+        returns (bool success)
+    {
         // derive solution hash n
-        uint n = uint(
-            keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce, targetDifficulty))
+        uint256 n = uint256(
+            keccak256(
+                abi.encodePacked(
+                    senderChallenges[msg.sender],
+                    msg.sender,
+                    nonce,
+                    targetDifficulty
+                )
+            )
         );
         // check that the minimum difficulty is met
         require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
 
         // reward the target difficulty - the number of zeros on the PoW solution
-        uint reward = targetDifficulty * 10**18;
-        
+        uint256 reward = targetDifficulty * 10**18;
+
         // update the challenge to prevent proof resubmission
-        // proof challenges are chained and deterministic for 
+        // proof challenges are chained and deterministic for
         // offchain submissions
         senderChallenges[msg.sender] = keccak256(
-            abi.encodePacked(
-                senderChallenges[msg.sender]
-            )
+            abi.encodePacked(senderChallenges[msg.sender])
         );
 
         // perform the mint operation
