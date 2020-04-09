@@ -17,6 +17,8 @@ In the above scenario the mining for target would provide the miner with at leas
 
 * Portability: Sparks are utility tokens that can be used to transfer value between any Mineable Token (EIP918 compatible). They are designed to represent proof of work and can be atomically applied to many scenarios. They may be useful in backing NFTs with proofs of work as a store of value, providing gated functions on smart contracts or creating fair, decentralized EIP918 token swaps.
 
+* Offchain mining: Since address challenges are deterministically hash-chained, miners can solve multiple difficulty solutions and submit them in batches once ready. This means more savings for miners and pool operators.
+
 ### Minting Spark Tokens
 
 Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of Work nonce is discovered by mining clients, the solution is hashed with the contract's challenge number and miner address and then checked that it meets required difficulty levels. ( The minimum difficulty of the Spark Token being 1 )
@@ -26,28 +28,32 @@ Spark tokens are relatively competatively fair with a very low difficulty floor 
 Primary mint function:
 ```solidity
 // mint function with variable difficulty
-function mint(uint nonce, uint targetDifficulty) public returns (bool success) {
-    // prevent gas racing by setting the maximum gas price to 5 gwei
-    require(tx.gasprice < 5 * 1000000000);
-
+function mint(uint256 nonce, uint256 targetDifficulty)
+    public
+    returns (bool success)
+{
     // derive solution hash n
-    uint n = uint(
-        keccak256(abi.encodePacked(senderChallenges[msg.sender], msg.sender, nonce, targetDifficulty))
+    uint256 n = uint256(
+        keccak256(
+            abi.encodePacked(
+                senderChallenges[msg.sender],
+                msg.sender,
+                nonce,
+                targetDifficulty
+            )
+        )
     );
     // check that the minimum difficulty is met
     require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
 
     // reward the target difficulty - the number of zeros on the PoW solution
-    uint reward = targetDifficulty;
-    
+    uint256 reward = targetDifficulty * 10**18;
+
     // update the challenge to prevent proof resubmission
+    // proof challenges are chained and deterministic for
+    // offchain submissions
     senderChallenges[msg.sender] = keccak256(
-        abi.encodePacked(
-            nonce,
-            senderChallenges[msg.sender],
-            now,
-            blockhash(block.number - 1)
-        )
+        abi.encodePacked(senderChallenges[msg.sender])
     );
 
     // perform the mint operation
@@ -211,7 +217,7 @@ function doSomethingElse(nonce){
 5. Triangular arbitrage between EIP918 tokens without having to use ETH or USD tethers. Example: KIWI-Spark-0xBitcoin This would provide market liquidity for tokens.
 
 ## Ropsten Testnet Deployment
-https://ropsten.etherscan.io/address/0xdeb4acd3907f495e7498a1deb9cd5accb2b07bcf
+https://ropsten.etherscan.io/address/0xc1c3fab09d6758ffb1af49baf77c4375657e097a
 
 ## References
 
