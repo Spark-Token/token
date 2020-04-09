@@ -1263,9 +1263,8 @@ contract SparkToken is ERC777, ERC918 {
             keccak256(
                 abi.encodePacked(
                     senderChallenges[msg.sender],
-                    msg.sender,
-                    nonce,
-                    targetDifficulty
+                    msg.sender ^ targetDifficulty,
+                    nonce
                 )
             )
         );
@@ -1294,16 +1293,14 @@ contract SparkToken is ERC777, ERC918 {
             keccak256(
                 abi.encodePacked(
                     senderChallenges[msg.sender],
-                    msg.sender,
-                    nonce,
-                    targetDifficulty
+                    uint(msg.sender) ^ targetDifficulty,
+                    nonce
                 )
             )
         );
-        // check that the minimum difficulty is met
-        require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
+
         // check that the target difficulty is met
-        require(n < targetDifficulty, "Target difficulty not met");
+        require(n < MAXIMUM_TARGET.div(targetDifficulty), "Target difficulty not met");
 
         // reward the target difficulty - the number of zeros on the PoW solution
         uint reward = targetDifficulty * 10**18;
