@@ -5,21 +5,17 @@ import "./ERC918.sol";
 
 
 contract SparkToken is ERC777, ERC918 {
-    using SafeMath for uint256;
-    uint256 public timeOfLastProof;
-    uint256 public MINIMUM_TARGET = 2**16;
-    uint256 public MAXIMUM_TARGET = 2**234;
-    uint256 public DEFAULT_TARGET_DIFFICULTY = 2**16;
+    using SafeMath for uint;
+    uint public MINIMUM_TARGET = 2**16;
+    uint public MAXIMUM_TARGET = 2**234;
+    uint public DEFAULT_TARGET_DIFFICULTY = 1;
 
-    mapping(address => bytes32) public senderChallenges;
+    mapping(address => uint) public senderChallenges;
 
     constructor() public ERC777("Spark", "SPARK", new address[](0)) {
         // no premine, initial supply of 0, tokens can only
         // be create via proof of work submissions to the mint()
         // function per the ERC918 specification
-
-        // initialize the proof timer for the default mint function
-        timeOfLastProof = now;
     }
 
     // ERC918 getMiningTarget function
@@ -41,21 +37,21 @@ contract SparkToken is ERC777, ERC918 {
 
     // ERC918 getChallengeNumber function
     function getChallengeNumber() external view returns (bytes32) {
-        return senderChallenges[msg.sender];
+        return bytes32(senderChallenges[msg.sender]);
     }
 
     // get the challenge number for a certain address, useful for delegated mining
-    function getChallengeNumber(address user) external view returns (bytes32) {
+    function getChallengeNumber(address user) external view returns (uint) {
         return senderChallenges[user];
     }
 
     // get the mining difficulty of a nonce
-    function getMiningDifficulty(uint256 nonce, uint256 targetDifficulty)
+    function getMiningDifficulty(uint nonce, uint targetDifficulty)
         public
         view
-        returns (uint256)
+        returns (uint)
     {
-        uint256 n = uint256(
+        uint n = uint(
             keccak256(
                 abi.encodePacked(
                     senderChallenges[msg.sender],
@@ -70,41 +66,23 @@ contract SparkToken is ERC777, ERC918 {
 
     // mint multiple solutions. Challenges can be calculated offchain by hash chaining them:
     // nextChallenge = keccak( currentChallenge )
-    function mint(uint256[] memory nonces) public returns (bool success) {
-        for (uint256 i = 0; i < nonces.length; i++) {
-            require(mint(nonces[i]));
-        }
-        return true;
-    }
-
-    // default ERC918 mint function using relavtively small default target difficulty
-    function mint(uint256 nonce) public returns (bool success) {
-        // add time based throttle to default mint since difficulty is low
-        uint256 timeSinceLastProof = (now - timeOfLastProof);
-        require(timeSinceLastProof > 5 seconds);
-        timeOfLastProof = now;
-        return mint(nonce, DEFAULT_TARGET_DIFFICULTY);
-    }
-
-    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them:
-    // nextChallenge = keccak( currentChallenge )
-    function mint(uint256[] memory nonces, uint256 targetDifficulty)
+    function mint(uint[] memory nonces, uint targetDifficulty)
         public
         returns (bool success)
     {
-        for (uint256 i = 0; i < nonces.length; i++) {
-            require(mint(nonces[i], targetDifficulty));
+        for (uint i = 0; i < nonces.length; i++) {
+            require(mint(nonces[i], targetDifficulty), "Unable to mint");
         }
         return true;
     }
 
     // mint function with variable difficulty
-    function mint(uint256 nonce, uint256 targetDifficulty)
+    function mint(uint nonce, uint targetDifficulty)
         public
         returns (bool success)
     {
         // derive solution hash n
-        uint256 n = uint256(
+        uint n = uint(
             keccak256(
                 abi.encodePacked(
                     senderChallenges[msg.sender],
@@ -116,16 +94,15 @@ contract SparkToken is ERC777, ERC918 {
         );
         // check that the minimum difficulty is met
         require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
+        // check that the target difficulty is met
+        require(n < targetDifficulty, "Target difficulty not met");
 
         // reward the target difficulty - the number of zeros on the PoW solution
-        uint256 reward = targetDifficulty * 10**18;
+        uint reward = targetDifficulty * 10**18;
 
         // update the challenge to prevent proof resubmission
-        // proof challenges are chained and deterministic for
-        // offchain submissions
-        senderChallenges[msg.sender] = keccak256(
-            abi.encodePacked(senderChallenges[msg.sender])
-        );
+        // proof challenges are simple counters
+        senderChallenges[msg.sender] += 1;
 
         // perform the mint operation
         _mint(msg.sender, msg.sender, reward, "", "");

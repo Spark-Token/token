@@ -1,7 +1,7 @@
 pragma solidity ^0.5.1;
 
 interface ERC918 {
-    function mint(uint256 nonce) external returns (bool success);
+    function mint(uint256 nonce, uint256 targetDifficulty) external returns (bool success);
 
     function getChallengeNumber() external view returns (bytes32);
 
