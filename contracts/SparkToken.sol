@@ -45,26 +45,25 @@ contract SparkToken is ERC777, ERC918 {
         return senderChallenges[user];
     }
 
-    // get the mining difficulty of a nonce
-    function getMiningDifficulty(uint nonce, uint targetDifficulty)
+    // validate a solution
+    function validate(uint nonce, uint targetDifficulty)
         public
         view
-        returns (uint)
+        returns (bool)
     {
         uint n = uint(
             keccak256(
                 abi.encodePacked(
                     senderChallenges[msg.sender],
-                    msg.sender ^ targetDifficulty,
+                    uint(msg.sender) ^ targetDifficulty,
                     nonce
                 )
             )
         );
-        return MAXIMUM_TARGET.div(n);
+        return n < MAXIMUM_TARGET.div(targetDifficulty);
     }
 
-    // mint multiple solutions. Challenges can be calculated offchain by hash chaining them:
-    // nextChallenge = keccak( currentChallenge )
+    // mint multiple solutions. Challenges can be calculated offchain by incrementing challenges by 1
     function mint(uint[] memory nonces, uint targetDifficulty)
         public
         returns (bool success)
