@@ -28,33 +28,30 @@ Spark tokens are relatively competatively fair with a very low difficulty floor 
 Primary mint function:
 ```solidity
 // mint function with variable difficulty
-function mint(uint256 nonce, uint256 targetDifficulty)
+function mint(uint nonce, uint targetDifficulty)
     public
     returns (bool success)
 {
     // derive solution hash n
-    uint256 n = uint256(
+    uint n = uint(
         keccak256(
             abi.encodePacked(
                 senderChallenges[msg.sender],
-                msg.sender,
-                nonce,
-                targetDifficulty
+                uint(msg.sender) ^ targetDifficulty,
+                nonce
             )
         )
     );
-    // check that the minimum difficulty is met
-    require(n < MAXIMUM_TARGET, "Minimum difficulty not met");
+
+    // check that the target difficulty is met
+    require(n < MAXIMUM_TARGET.div(targetDifficulty), "Target difficulty not met");
 
     // reward the target difficulty - the number of zeros on the PoW solution
-    uint256 reward = targetDifficulty * 10**18;
+    uint reward = targetDifficulty * 10**18;
 
     // update the challenge to prevent proof resubmission
-    // proof challenges are chained and deterministic for
-    // offchain submissions
-    senderChallenges[msg.sender] = keccak256(
-        abi.encodePacked(senderChallenges[msg.sender])
-    );
+    // proof challenges are simple counters
+    senderChallenges[msg.sender] += 1;
 
     // perform the mint operation
     _mint(msg.sender, msg.sender, reward, "", "");
