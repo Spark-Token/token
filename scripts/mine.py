@@ -45,7 +45,6 @@ def mineSparks(contract_hex, public_key_hex, challenge_number, target_difficulty
 	# mine solution based on challenge, pk, and target difficulty
 	valid_nonce, resulting_hash = mine(challenge, xored, target_difficulty)
 	print("Resulting hash is: ", hex(resulting_hash))
-	print("Soln difficulty (reward):", MAX_TARGET / resulting_hash )
 	print("Valid soln nonce is: ", "0x" + valid_nonce.hex())
 
 def main():
