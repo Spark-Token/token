@@ -5,12 +5,10 @@ import "./ERC918.sol";
 
 
 contract SparkToken is ERC777, ERC918 {
-    using SafeMath for uint;
-    uint public MINIMUM_TARGET = 2**16;
-    uint public MAXIMUM_TARGET = 2**234;
-    uint public DEFAULT_TARGET_DIFFICULTY = 1;
+    using SafeMath for uint256;
+    uint256 public MAXIMUM_TARGET = 2**234;
 
-    mapping(address => uint) public senderChallenges;
+    mapping(address => uint256) public senderChallenges;
 
     constructor() public ERC777("Spark", "SPARK", new address[](0)) {
         // no premine, initial supply of 0, tokens can only
@@ -29,10 +27,9 @@ contract SparkToken is ERC777, ERC918 {
     }
 
     // ERC918 getMiningDifficulty function
-    // the number of zeroes the digest of the PoW solution requires
-    // minimum is 2**16
+    // placeholder for compatibility, cannot be used
     function getMiningDifficulty() public view returns (uint256) {
-        return DEFAULT_TARGET_DIFFICULTY;
+        return 1;
     }
 
     // ERC918 getChallengeNumber function
@@ -41,21 +38,23 @@ contract SparkToken is ERC777, ERC918 {
     }
 
     // get the challenge number for a certain address, useful for delegated mining
-    function getChallengeNumber(address user) external view returns (uint) {
-        return senderChallenges[user];
+    function getChallengeNumber(address user) external view returns (bytes32) {
+        return bytes32(senderChallenges[user]);
     }
 
     // validate a solution
-    function validate(uint nonce, uint targetDifficulty)
+    function validate(uint256 nonce, uint256 targetDifficulty)
         public
         view
         returns (bool)
     {
-        uint n = uint(
+        uint256 n = uint256(
             keccak256(
                 abi.encodePacked(
                     senderChallenges[msg.sender],
-                    uint(msg.sender) ^ targetDifficulty,
+                    uint256(msg.sender) ^
+                    targetDifficulty ^
+                    uint256(address(this)),
                     nonce
                 )
             )
@@ -64,37 +63,42 @@ contract SparkToken is ERC777, ERC918 {
     }
 
     // mint multiple solutions. Challenges can be calculated offchain by incrementing challenges by 1
-    function mint(uint[] memory nonces, uint targetDifficulty)
+    function mint(uint256[] memory nonces, uint256 targetDifficulty)
         public
         returns (bool success)
     {
-        for (uint i = 0; i < nonces.length; i++) {
+        for (uint256 i = 0; i < nonces.length; i++) {
             require(mint(nonces[i], targetDifficulty), "Unable to mint");
         }
         return true;
     }
 
     // mint function with variable difficulty
-    function mint(uint nonce, uint targetDifficulty)
+    function mint(uint256 nonce, uint256 targetDifficulty)
         public
         returns (bool success)
     {
         // derive solution hash n
-        uint n = uint(
+        uint256 n = uint256(
             keccak256(
                 abi.encodePacked(
                     senderChallenges[msg.sender],
-                    uint(msg.sender) ^ targetDifficulty,
+                    uint256(msg.sender) ^
+                    targetDifficulty ^
+                    uint256(address(this)),
                     nonce
                 )
             )
         );
 
         // check that the target difficulty is met
-        require(n < MAXIMUM_TARGET.div(targetDifficulty), "Target difficulty not met");
+        require(
+            n < MAXIMUM_TARGET.div(targetDifficulty),
+            "Target difficulty not met"
+        );
 
         // reward the target difficulty - the number of zeros on the PoW solution
-        uint reward = targetDifficulty * 10**18;
+        uint256 reward = targetDifficulty * 10**18;
 
         // update the challenge to prevent proof resubmission
         // proof challenges are simple counters

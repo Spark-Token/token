@@ -15,6 +15,10 @@ def xor_strings(xs, ys):
 	return "{0:0{1}x}".format(int(xs, 16) ^ int(ys, 16), 64)
 	#return format(int(xs, 16) ^ int(ys, 16), 'x')
 
+def xor_strings(xs, ys, zs):
+	print(xs, ys, zs)
+	return "{0:0{1}x}".format(int(xs, 16) ^ int(ys, 16) ^ int(zs, 16), 64)
+
 # mine against a variable difficulty
 def mine(challenge, xored, target_difficulty):
 	target = MAX_TARGET / target_difficulty
@@ -28,14 +32,19 @@ def mine(challenge, xored, target_difficulty):
 			return nonce, hash1
 
 def main():
+	# contract address hex
+	contract_hex = '9cc236461174E3Ac1b263F1F4E7C9e939B84481F'
+	contract_hex = "{0:0{1}x}".format(int(contract_hex,16), 64)
+
 	# current challenge hex
-	challenge_hex = '0000000000000000000000000000000000000000000000000000000000000000' 
+	# challenge_hex = '000000000000000000000000FFE59C55C6A7466B6338007CB541A6FFA96DAFBF'
+	challenge_hex = '0000000000000000000000000000000000000000000000000000000000000001' 
+	# challenge_hex = "{0:0{1}x}".format(1460913135915204819274690657848886480519004270527, 64)  
 	challenge = codecs.decode(challenge_hex,'hex_codec')
 
 	# miner ethereum public key without leading 0x
 	public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086'
-	# public_key_hex = 'CA35b7d915458EF540aDe6068dFe2F44E8fa733c'
-	# public_key = codecs.decode(public_key_hex,'hex_codec')
+	# public_key = codecs.decode(public_key_hex,'hex_codec')	
 
 	# miner sets the target difficulty to mine
 	target_difficulty = 3
@@ -43,7 +52,7 @@ def main():
 	public_key_hex = "{0:0{1}x}".format(int(public_key_hex,16), 64)
 
 	# xor public key and vardiff
-	xored_hex = xor_strings(public_key_hex, target_difficulty_hex)
+	xored_hex = xor_strings(public_key_hex, target_difficulty_hex, contract_hex)
 	print(xored_hex)
 	xored = codecs.decode(xored_hex,'hex_codec')
 
