@@ -34,7 +34,7 @@ def mineSparks(contract_hex, public_key_hex, challenge_number, target_difficulty
 	target_difficulty_hex = "{0:0{1}x}".format(target_difficulty, 64)
 	public_key_hex = "{0:0{1}x}".format(int(public_key_hex,16), 64)
 
-	# xor public key and vardiff
+	# xor public key, vardiff, and contract
 	xored_hex = xor_strings(public_key_hex, target_difficulty_hex, contract_hex)
 	print(xored_hex)
 	xored = codecs.decode(xored_hex,'hex_codec')
