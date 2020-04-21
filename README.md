@@ -37,9 +37,7 @@ function mint(uint256 nonce, uint256 targetDifficulty)
         keccak256(
             abi.encodePacked(
                 senderChallenges[msg.sender],
-                uint256(msg.sender) ^
-                targetDifficulty ^
-                uint256(address(this)),
+                keccak256(abi.encodePacked(msg.sender, targetDifficulty, address(this))),
                 nonce
             )
         )
