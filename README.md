@@ -1,7 +1,7 @@
 # Spark Token
 ### An EIP918 smart contract that tokenizes proof of work difficulty
 
-Spark is an EIP918 token that provides miners the ability to tokenize hashpower. Tokens are minted based solely on the difficulty target (the number of zeros) of the provided solution, defined as:
+Spark is an EIP918 token that provides miners the ability to tokenize hashpower directly, without having to compete against other miners. Tokens are minted based solely on the difficulty target (the number of zeros) of the provided solution, defined as:
 
 ```
 MAX_TARGET = 2**234
@@ -13,11 +13,11 @@ In the above scenario the mining for target would provide the miner with at leas
 
 ### Advantages
 
-* Energy Savings: Spark Tokens use much less electricity than difficulty-scheduled tokens because they remove the need for network competition. There is no race to submit your solution, as each challenge is tied to individual mining accounts, so there is zero wasted hash power in the production of Sparks. The reward is purely based on work performed. In fact you could accumulate as much difficulty as you want to, for as long as you want to, and submit it to the contract at any time without penalty. These energy savings benefit miners, pool relayers and the planet.
+* Energy Savings: Spark Tokens use much less electricity than difficulty-adjusted tokens because they remove the need for network competition. There is no race to submit your solution, as each challenge is tied to individual mining accounts, so there is zero wasted hash power in the production of Sparks. The reward is purely based on work performed. In fact you could accumulate as much difficulty as you want to, for as long as you want to, and submit it to the contract at any time without penalty. These energy savings benefit miners, pool relayers and the planet.
 
 * Portability: Sparks are utility tokens that can be used to transfer value between any Mineable Token (EIP918 compatible). They are designed to represent proof of work and can be atomically applied to many scenarios. They may be useful in backing NFTs with proofs of work as a store of value, providing gated functions on smart contracts or creating fair, decentralized EIP918 token swaps.
 
-* Offchain mining: Since address challenges are deterministically hash-chained, miners can solve multiple difficulty solutions and submit them in batches once ready. This means more savings for miners and pool operators.
+* Offchain mining: Since address challenges are simple, deterministic counters, miners can solve multiple difficulty solutions and submit them in batches once ready. This means more savings for miners and pool operators.
 
 ### Minting Spark Tokens
 
