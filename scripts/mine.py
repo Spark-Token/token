@@ -17,41 +17,39 @@ def xor_strings(xs, ys, zs):
 	return "{0:0{1}x}".format(int(xs, 16) ^ int(ys, 16) ^ int(zs, 16), 64)
 
 # mine against a variable difficulty
-def mine(challenge, xored, target_difficulty):
+def mine(challenge, public_key_hex, target_difficulty_hex, contract_hex, target_difficulty):
 	target = MAX_TARGET / target_difficulty
-	target_difficulty_hex = "{0:0{1}x}".format(target_difficulty, 64)
-	td = codecs.decode(target_difficulty_hex,'hex_codec')
+	target_difficulty_hex = codecs.decode("{0:0{1}x}".format(target_difficulty, 64),'hex_codec')
+	innerHash = sha3.keccak_256(public_key_hex+target_difficulty_hex+contract_hex).hexdigest()
+	innerHash = codecs.decode("{0:0{1}x}".format(int(innerHash,16), 64),'hex_codec')
 	while True:
 		nonce = generate_nonce()
-		hash1 = int(sha3.keccak_256(challenge+xored+nonce).hexdigest(), 16)
+		hash1 = int(sha3.keccak_256(challenge+innerHash+nonce).hexdigest(), 16)
 		if hash1 < target:
 			return nonce, hash1
 
 def mineSparks(contract_hex, public_key_hex, challenge_number, target_difficulty):
 	# formatting/padding
-	contract_hex = "{0:0{1}x}".format(int(contract_hex,16), 64)
+	contract_hex = codecs.decode("{0:0{1}x}".format(int(contract_hex,16), 20),'hex_codec')
 	challenge = codecs.decode("{0:0{1}x}".format(challenge_number, 64),'hex_codec')
-	target_difficulty_hex = "{0:0{1}x}".format(target_difficulty, 64)
-	public_key_hex = "{0:0{1}x}".format(int(public_key_hex,16), 64)
-
-	# xor public key and vardiff
-	xored_hex = xor_strings(public_key_hex, target_difficulty_hex, contract_hex)
-	print(xored_hex)
-	xored = codecs.decode(xored_hex,'hex_codec')
+	target_difficulty_hex = codecs.decode("{0:0{1}x}".format(target_difficulty, 64),'hex_codec')
+	public_key_hex = codecs.decode("{0:0{1}x}".format(int(public_key_hex,16), 20),'hex_codec')
 
 	target = MAX_TARGET / target_difficulty
 	print("Target Difficulty:", target_difficulty )
 	print("Target:", target )
+
 	# mine solution based on challenge, pk, and target difficulty
-	valid_nonce, resulting_hash = mine(challenge, xored, target_difficulty)
+	valid_nonce, resulting_hash = mine(challenge, public_key_hex, target_difficulty_hex, contract_hex, target_difficulty)
+
 	print("Resulting hash is: ", hex(resulting_hash))
 	print("Valid soln nonce is: ", "0x" + valid_nonce.hex())
 
 def main():
 	# input variables
-	contract_hex = '9cc236461174E3Ac1b263F1F4E7C9e939B84481F'
+	contract_hex = '9Ad77cBd452e2Cc7F8325aE909c9f2993116AEC7'
 	public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086'
-	challenge_number = 2
+	challenge_number = 0
 	target_difficulty = 3
 
 	# mine
