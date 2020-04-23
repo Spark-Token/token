@@ -1,5 +1,5 @@
 # Spark Token
-### An EIP918 smart contract that tokenizes proof of work difficulty
+### An EIP918 smart contract that directly tokenizes proof of work difficulty
 
 Spark is an EIP918 token that provides miners the ability to tokenize hashpower directly, without having to compete against other miners. Tokens are minted based solely on the difficulty target (the number of zeros) of the provided solution, defined as:
 
