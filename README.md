@@ -25,6 +25,10 @@ Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of
 
 Spark tokens are relatively competatively fair with a very low difficulty floor (1) that miners have to adhere to. This means that if you mine 1,000,000,000 tokens or just 1 you have the same advantage in submitting your solution. This important feature of the token levels the playing field for smaller miners looking to accumulate hashpower independently.
 
+#### Hash Encoding:
+
+`keccak(keccak(challenge,vardiff,contract), pubkey, nonce)`
+
 Primary mint function:
 ```solidity
 function mint(uint256 nonce, uint256 targetDifficulty)
