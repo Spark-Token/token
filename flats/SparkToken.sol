@@ -1260,8 +1260,8 @@ contract SparkToken is ERC777, ERC918 {
         uint256 n = uint256(
             keccak256(
                 abi.encodePacked(
-                    senderChallenges[msg.sender],
-                    keccak256(abi.encodePacked(msg.sender, targetDifficulty, address(this))),
+                    keccak256(abi.encodePacked(senderChallenges[msg.sender], targetDifficulty, address(this))),
+                    msg.sender,
                     nonce
                 )
             )
@@ -1289,8 +1289,8 @@ contract SparkToken is ERC777, ERC918 {
         uint256 n = uint256(
             keccak256(
                 abi.encodePacked(
-                    senderChallenges[msg.sender],
-                    keccak256(abi.encodePacked(msg.sender, targetDifficulty, address(this))),
+                    keccak256(abi.encodePacked(senderChallenges[msg.sender], targetDifficulty, address(this))),
+                    msg.sender,
                     nonce
                 )
             )

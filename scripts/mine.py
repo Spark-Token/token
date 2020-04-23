@@ -18,13 +18,14 @@ def xor_strings(xs, ys, zs):
 
 # mine against a variable difficulty
 def mine(challenge, public_key_hex, target_difficulty_hex, contract_hex, target_difficulty):
+	# keccak ( keccak(challenge,vardiff,contract), pubkey, nonce  )
 	target = MAX_TARGET / target_difficulty
 	target_difficulty_hex = codecs.decode("{0:0{1}x}".format(target_difficulty, 64),'hex_codec')
-	innerHash = sha3.keccak_256(public_key_hex+target_difficulty_hex+contract_hex).hexdigest()
+	innerHash = sha3.keccak_256(challenge+target_difficulty_hex+contract_hex).hexdigest()
 	innerHash = codecs.decode("{0:0{1}x}".format(int(innerHash,16), 64),'hex_codec')
 	while True:
 		nonce = generate_nonce()
-		hash1 = int(sha3.keccak_256(challenge+innerHash+nonce).hexdigest(), 16)
+		hash1 = int(sha3.keccak_256(innerHash+public_key_hex+nonce).hexdigest(), 16)
 		if hash1 < target:
 			return nonce, hash1
 
@@ -47,7 +48,7 @@ def mineSparks(contract_hex, public_key_hex, challenge_number, target_difficulty
 
 def main():
 	# input variables
-	contract_hex = '9Ad77cBd452e2Cc7F8325aE909c9f2993116AEC7'
+	contract_hex = '3aca6c576ff26da80e94af405176573d645c95a2'
 	public_key_hex = '7E6a477B833829463E5420F39eA5d9AEfef42086'
 	challenge_number = 0
 	target_difficulty = 3
