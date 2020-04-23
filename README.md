@@ -27,7 +27,6 @@ Spark tokens are relatively competatively fair with a very low difficulty floor 
 
 Primary mint function:
 ```solidity
-// mint function with variable difficulty
 function mint(uint256 nonce, uint256 targetDifficulty)
     public
     returns (bool success)
@@ -36,8 +35,8 @@ function mint(uint256 nonce, uint256 targetDifficulty)
     uint256 n = uint256(
         keccak256(
             abi.encodePacked(
-                senderChallenges[msg.sender],
-                keccak256(abi.encodePacked(msg.sender, targetDifficulty, address(this))),
+                keccak256(abi.encodePacked(senderChallenges[msg.sender], targetDifficulty, address(this))),
+                msg.sender,
                 nonce
             )
         )
@@ -217,7 +216,7 @@ function doSomethingElse(nonce){
 5. Triangular arbitrage between EIP918 tokens without having to use ETH or USD tethers. Example: KIWI-Spark-0xBitcoin This would provide market liquidity for tokens.
 
 ## Ropsten Testnet Deployment
-https://ropsten.etherscan.io/address/0x9Ad77cBd452e2Cc7F8325aE909c9f2993116AEC7
+https://ropsten.etherscan.io/address/0x3aca6c576ff26da80e94af405176573d645c95a2
 
 ## References
 
