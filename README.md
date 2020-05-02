@@ -19,6 +19,29 @@ In the above scenario the mining for target would provide the miner with at leas
 
 * Offchain mining: Since address challenges are simple, deterministic counters, miners can solve multiple difficulty solutions and submit them in batches once ready. This means more savings for miners and pool operators.
 
+### Economic Properties
+
+Spark token is an experimental token that rewards hash power to miners proportional to the difficulty of the block. 
+This is interesting, as the difficulty is proportional to the number of hashes that went into finding a block, and the number of hashes is proportional to the energy spent by the miner with their devices especially with ASIC compatible hashing functions. Each token thereby is proportional to energy and money spent into acquiring the token. This has much different economics from the main token reward for securing the block chain which stays constant as the difficulty of the network increases.  This proportionality has a proportional modifier based on the efficiency of the ASIC.
+
+Bitcoin, Ethereum, Ethereum classic all have an economic incentive that rewards miners very unevely based on when they mine, as within a given year, the hashrate and difficulty of a network can vary wildly and a miner can expect a very different number of coins that they receive for a given amount of computational power. 
+
+With Spark token, miners will be rewarded with coins proportional to their hash rate. This means that they can expect a consistent amount of Spark tokens over time for a given amount of computational resources. Spark token has these special properties that make it a new category of token.
+
+1. The token is an energy stable coin as opposed to a currency stable coin in that it is pinned to a specific real world good. Each token can statistically be correlated with  a specific amount of hash power over a specific amount of time. This correlates to Energy usage, albiet with a computational efficiency factor. And the the graph below shows the correlation between energy and cost over decades.
+
+![Retail Energy Costs over decades](https://i.imgur.com/Yy7b9Cv.png)
+
+2. Miners can have easily predictable schedules of being awarded Spark token over a future time frame and therefore can use Spark token in DeFi to borrow from lenders in a very predictable way.
+
+Spark token also has properties that other tokens have like 
+
+1. Use decentralized block chain to open up the token to a liquidy market where miners who produce the supply can interact with traders, speculators and lenders who are looking to earn fees or store value.
+
+Spark token is separate from "deflationary" coins like bitcoin, ethereum, etc which use difficulty adjustments to lower the emission rate as the hashrate of the global chain increases. Spark token is separate from Dai and Gemini USD/CoinbaseUSD because the pricing is such that anyone may generate a Spark token by setting up a miner to mine with enough fuel as to generate the required number of tokens. 
+
+
+
 ### Minting Spark Tokens
 
 Spark Tokens are minted the same way any EIP918 compliant tokens are. A Proof of Work nonce is discovered by mining clients, the solution is hashed with the contract's challenge number and miner address and then checked that it meets required difficulty levels. ( The minimum difficulty of the Spark Token being 1 )
